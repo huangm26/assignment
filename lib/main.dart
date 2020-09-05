@@ -1,4 +1,4 @@
-import 'package:affirm_assignment/managers/http_client.dart';
+import 'package:affirm_assignment/managers/http_manager.dart';
 import 'package:affirm_assignment/managers/location_manager.dart';
 import 'package:affirm_assignment/pages/yelp_display.dart';
 import 'package:flutter/material.dart';

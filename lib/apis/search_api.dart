@@ -1,5 +1,5 @@
 
-import 'package:affirm_assignment/managers/http_client.dart';
+import 'package:affirm_assignment/managers/http_manager.dart';
 import 'package:dio/dio.dart';
 
 /// Network api for search business from yelp
