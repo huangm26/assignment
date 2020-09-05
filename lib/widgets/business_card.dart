@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 
 class BusinessCard extends StatefulWidget {
   final Business business;
+  final double elevation;
 
-  const BusinessCard({this.business});
+  const BusinessCard({this.business, this.elevation});
 
   @override
   _BusinessCardState createState() => _BusinessCardState();
@@ -17,17 +18,27 @@ class _BusinessCardState extends State<BusinessCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: widget.elevation,
       shape: RoundedRectangleBorder(
         borderRadius: _cornerRadius
       ),
       child: Stack(
         children: [
-          ClipRRect(
-            borderRadius: _cornerRadius,
-            child: CachedNetworkImage(
-              imageUrl: widget.business.imageUrl,
-              placeholder: (context, url) => CircularProgressIndicator(),
-              errorWidget: (context, url, error) => Icon(Icons.error),
+          Center(
+            child: widget.business.imageUrl?.isNotEmpty == true ? ClipRRect(
+              borderRadius: _cornerRadius,
+              child: CachedNetworkImage(
+                imageUrl: widget.business.imageUrl,
+                placeholder: (context, url) => CircularProgressIndicator(),
+                errorWidget: (context, url, error) => Icon(Icons.error),
+              ),
+            ) : Container(
+              width: 400,
+              height: 300,
+              alignment: Alignment.center,
+              child: Text(
+                'No Image available'
+              ),
             ),
           ),
           Align(

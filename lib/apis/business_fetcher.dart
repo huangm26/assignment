@@ -1,4 +1,5 @@
 import 'package:affirm_assignment/apis/search_api.dart';
+import 'package:affirm_assignment/managers/logger.dart';
 import 'package:affirm_assignment/model/business.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -11,8 +12,11 @@ class BusinessFetcher {
   final List<String> categories;
   final int queryLimit;
   final Map<int, Future> _inProgressSearch = {};
+  int _totalCount = 0;
   
   List<Business> _businesses;
+
+  int get totalCount => _totalCount;
 
   BusinessFetcher({@required this.latitude, @required this.longitude, this.categories = const ['restaurants'], this.queryLimit = 20});
 
@@ -35,6 +39,16 @@ class BusinessFetcher {
     }
   }
 
+  /// Api to return the initial part of business responses
+  /// TODO: For now limit the size to be smaller than queryLimit
+  Future<List<Business>> getFirstBusinesses(int size) {
+    if (_businesses != null && _businesses.length >= size && _businesses[size - 1] != null) {
+      return Future.value(_businesses.sublist(0, size));
+    } else {
+      return _searchBusinessAtPage(pageIndex: 0).then((_) => _businesses.sublist(0, _businesses.length > size ? size : _businesses.length));
+    }
+  }
+
   Future _searchBusinessAtPage({int pageIndex}) {
     /// Prevent duplicate calls
     if (_inProgressSearch.containsKey(pageIndex)) {
@@ -46,6 +60,8 @@ class BusinessFetcher {
           List<Business> businesses = response['businesses'].map<Business>((businessJson) => Business.fromDynamic(businessJson)).toList();
           if (_businesses == null) {
             int totalCount = response['total'];
+            _totalCount = totalCount;
+            logger.d('Total count $totalCount');
             _businesses = List<Business>(totalCount);
           }
           List.copyRange(_businesses, pageIndex * queryLimit, businesses);
